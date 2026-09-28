@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ros2_cpp_template</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="todo@todo.com">TODO:</maintainer>
+  <name>kle_g26_parkingradar</name>
+  <version>0.0.1</version>
+  <description>Szimulalt tolatoradar: ultrahangos tavolsagszenzor es figyelmezteto node</description>
+  <maintainer email="Vikesz-g2662b@users.noreply.github.com">Vikesz-g2662b</maintainer>
   <license>GNU General Public License v3.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
-  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
   <exec_depend>ros2launch</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
