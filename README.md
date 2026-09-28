@@ -28,6 +28,10 @@ classDef light fill:#34aec5,stroke:#152742,stroke-width:2px,color:#152742
 classDef red fill:#ef4638,stroke:#152742,stroke-width:2px,color:#fff
 ```
 
+Futás közben az `rqt_graph` által mutatott gráf:
+
+![rqt_graph](img/rqt_graph.png)
+
 ## Packages and build
 
 It is assumed that the workspace is `~/ros2_ws/`.
