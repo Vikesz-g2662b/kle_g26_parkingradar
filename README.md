@@ -1,56 +1,80 @@
-# `ros2_cpp_template` package
-ROS 2 C++ package.  [![Static Badge](https://img.shields.io/badge/ROS_2-Humble-34aec5)](https://docs.ros.org/en/humble/)
+# `kle_g26_parkingradar` package
+
+Szimulált tolatóradar ROS 2 alatt. Egy autó tolat egy fal felé, a hátsó ultrahangos szenzor méri a távolságot, a radar pedig a távolság alapján figyelmeztet – mint egy valódi parkolóradar. Megvalósítás `ROS 2 Humble` alatt.
+
+A package két node-ból áll:
+
+- A `/distance_sensor` 10 Hz-en szimulált távolságot hirdet egy `sensor_msgs/msg/Range` típusú topicban (`/parking/distance`). A távolság 2.0 m-ről 0.1 m-ig csökken (0.2 m/s tolatás), utána újraindul; az értékhez kis zajt ad.
+- A `/parking_radar` feliratkozik a távolságra, és két topicot hirdet: a figyelmeztetési szintet `std_msgs/msg/String` típusban (`/parking/warning`), a sípolás frekvenciáját `std_msgs/msg/Float32` típusban (`/parking/beep_rate`).
+
+| Távolság | `/parking/warning` | `/parking/beep_rate` |
+|---|---|---|
+| > 1.5 m | `BIZTONSAGOS` | 0 Hz |
+| 0.8 – 1.5 m | `FIGYELEM` | 2 Hz |
+| 0.3 – 0.8 m | `VESZELY` | 5 Hz |
+| < 0.3 m | `STOP!` | 20 Hz |
+
+## Node-topic kapcsolatok
+
+```mermaid
+graph LR
+
+sensor([ /distance_sensor]):::red --> dist[ /parking/distance<br/>sensor_msgs/Range]:::light
+dist --> radar([ /parking_radar]):::red
+radar --> warn[ /parking/warning<br/>std_msgs/String]:::light
+radar --> beep[ /parking/beep_rate<br/>std_msgs/Float32]:::light
+
+classDef light fill:#34aec5,stroke:#152742,stroke-width:2px,color:#152742
+classDef red fill:#ef4638,stroke:#152742,stroke-width:2px,color:#fff
+```
+
 ## Packages and build
 
 It is assumed that the workspace is `~/ros2_ws/`.
 
 ### Clone the packages
-``` r
+
+```bash
 cd ~/ros2_ws/src
 ```
-``` r
-git clone https://github.com/sze-info/ros2_cpp_template
+
+```bash
+git clone https://github.com/Vikesz-g2662b/kle_g26_parkingradar
 ```
 
 ### Build ROS 2 packages
-``` r
+
+```bash
 cd ~/ros2_ws
 ```
-``` r
-colcon build --packages-select ros2_cpp_template --symlink-install
+
+```bash
+colcon build --packages-select kle_g26_parkingradar --symlink-install
 ```
 
-<details>
-<summary> Don't forget to source before ROS commands.</summary>
+## Run
 
-``` bash
+```bash
 source ~/ros2_ws/install/setup.bash
 ```
-</details>
 
-``` r
-ros2 launch ros2_cpp_template launch_example1.launch.py
+```bash
+ros2 launch kle_g26_parkingradar parking_radar.launch.py
 ```
 
-# Delete this part if you are using it as a template
+A figyelmeztetések külön terminálban is megnézhetők:
 
-ROS 2 pacage template, to get started, use template by clicking on the Green button labeled [`Use this template`](https://github.com/sze-info/ros2_cpp_template/generate) / [`Create new repository`](https://github.com/sze-info/ros2_cpp_template/generate). 
+```bash
+ros2 topic echo /parking/warning
+```
 
-<p align="center"><img src="img/use_this_template01.png" width="60%" /></p>
+Példa kimenet:
 
-
-Let's assume 
-- your Github username is `mycoolusername`
-- your ROS 2 repo shold be `cool_ros2_package`
-
-Replace everything in the cloned repo:
-
-- `ros2_cpp_template` >> `cool_ros2_package` (the folder was already renamed after `Use this template`)
-- `sze-info` >> `mycoolusername`
-- find all `todo` strings and fill the blanks
-
-The easiest way is VS code:
-
-<p align="center"><img src="img/replace01.png" width="60%" /></p>
-
-Now `colcon build` your ROS 2 package and you can start wokring.
+```
+[parking_radar-2] [INFO] [parking_radar]: Tolatoradar elindult
+[parking_radar-2] [INFO] [parking_radar]: Tavolsag: 1.97 m -> BIZTONSAGOS (sipolas: 0 Hz)
+[parking_radar-2] [INFO] [parking_radar]: Tavolsag: 1.49 m -> FIGYELEM (sipolas: 2 Hz)
+[parking_radar-2] [INFO] [parking_radar]: Tavolsag: 0.80 m -> VESZELY (sipolas: 5 Hz)
+[parking_radar-2] [INFO] [parking_radar]: Tavolsag: 0.29 m -> STOP! (sipolas: 20 Hz)
+[distance_sensor-1] [INFO] [distance_sensor]: Uj parkolas indul 2.0 m-rol
+```
